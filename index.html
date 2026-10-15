@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>피그마 가이드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --bg:#ffffff; --bg-soft:#f5f7fb; --bg-sunk:#eef1f7;
+  --line:#e3e7ef; --line-strong:#cfd6e3;
+  --text:#121826; --text-2:#4a5466; --text-3:#7c8597;
+  --accent:#0046ff; --accent-soft:#e8eeff; --accent-ink:#0036c4;
+  --ok:#0f8a5f; --ok-soft:#e7f6ef; --no:#d92d3a; --no-soft:#fdecee;
+  --note-soft:#f4f6fa; --warn-soft:#fff6e0;
+  --radius:14px; --shadow:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.06);
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f131b; --bg-soft:#151a24; --bg-sunk:#1b2130;
+    --line:#262d3b; --line-strong:#323b4d;
+    --text:#e9edf5; --text-2:#b3bccb; --text-3:#7f899b;
+    --accent:#5b8cff; --accent-soft:#1a2648; --accent-ink:#8fb0ff;
+    --ok:#3ccf95; --ok-soft:#12291f; --no:#ff6b77; --no-soft:#2d161a;
+    --note-soft:#181e2a; --warn-soft:#2a2414;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15.5px;line-height:1.7;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font:inherit;cursor:pointer}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none!important;flex-shrink:0}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center}
+.logo i{display:block;width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:-7px -7px 0 -3px #fff,7px 7px 0 -3px #fff}
+.brand b{font-size:16px;letter-spacing:-.02em}
+.brand small{display:block;font-size:11.5px;color:var(--text-3);font-weight:500;line-height:1.2}
+.search{flex:1;max-width:420px;margin-left:auto;position:relative}
+.search input{width:100%;height:40px;border:1px solid var(--line);background:var(--bg-soft);border-radius:10px;padding:0 14px 0 38px;font:inherit;font-size:14.5px;color:var(--text);outline:none;transition:.15s}
+.search input:focus{border-color:var(--accent);background:var(--bg);box-shadow:0 0 0 3px var(--accent-soft)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-3)}
+.btn{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--bg-soft)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-ink)}
+.btn.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn.sm{height:32px;padding:0 10px;font-size:13px;border-radius:8px}
+.btn.danger{color:var(--no)}
+
+/* edit bar */
+.editbar{display:none;background:var(--text);color:var(--bg)}
+body.editing .editbar{display:block}
+.editbar-in{max-width:1200px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13.5px}
+.editbar .status{margin-right:auto;opacity:.85}
+.editbar .btn{height:32px;font-size:13px;border-color:transparent}
+
+/* layout */
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:48px}
+.side{position:sticky;top:84px;align-self:start;padding:28px 0;max-height:calc(100vh - 84px);overflow:auto}
+.side h6{margin:0 0 8px;font-size:11.5px;font-weight:700;color:var(--text-3);letter-spacing:.06em}
+.navpage{display:block;padding:9px 12px;border-radius:10px;color:var(--text-2);font-weight:600;font-size:14.5px;text-decoration:none!important;margin-bottom:2px}
+.navpage:hover{background:var(--bg-soft);color:var(--text)}
+.navpage.active{background:var(--accent-soft);color:var(--accent-ink)}
+.navsub{margin:4px 0 14px 12px;padding-left:12px;border-left:1px solid var(--line)}
+.navsub a{display:block;padding:5px 8px;font-size:13.5px;color:var(--text-3);border-radius:6px;text-decoration:none!important;line-height:1.45}
+.navsub a:hover{color:var(--text)}
+.navsub a.cur{color:var(--accent);font-weight:600}
+main{padding:40px 0 120px;min-width:0}
+
+/* page head */
+.eyebrow{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px}
+h1.pt{font-size:34px;line-height:1.3;letter-spacing:-.03em;margin:0 0 10px}
+.intro{font-size:16.5px;color:var(--text-2);margin:0 0 32px}
+
+/* info cards */
+.infos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:44px}
+.info{border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;background:var(--bg-soft)}
+.info h3.st{font-size:14px;color:var(--text-3);margin:0 0 6px;font-weight:700}
+.info .md>:last-child{margin-bottom:0}
+
+/* steps */
+.step,.qa,.info{scroll-margin-top:84px}
+.step{position:relative;padding:0 0 48px 64px}
+.step::before{content:"";position:absolute;left:19px;top:44px;bottom:0;width:2px;background:var(--line)}
+.step:last-of-type::before{display:none}
+.num{position:absolute;left:0;top:0;width:40px;height:40px;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;font-size:17px;display:grid;place-items:center}
+.num.plain{background:var(--bg-sunk);color:var(--text-2)}
+h2.st{font-size:23px;letter-spacing:-.02em;margin:4px 0 18px;line-height:1.4}
+
+/* faq */
+.group{margin:0 0 40px}
+.group-h{display:flex;align-items:baseline;gap:10px;margin:0 0 12px}
+.group-h h2{font-size:20px;margin:0;letter-spacing:-.02em}
+.group-h span{font-size:13px;color:var(--text-3)}
+.qa{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;background:var(--bg);transition:border-color .15s,box-shadow .15s}
+.qa[open]{border-color:var(--line-strong);box-shadow:var(--shadow)}
+.qa summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;gap:12px;align-items:flex-start;font-weight:650;font-size:16px}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary .q{color:var(--accent);font-weight:800;flex-shrink:0}
+.qa summary .t{flex:1}
+.qa summary .chev{flex-shrink:0;margin-top:5px;transition:transform .2s;color:var(--text-3)}
+.qa[open] summary .chev{transform:rotate(180deg)}
+.qa .ans{padding:0 20px 20px 46px}
+.empty{color:var(--text-3);font-size:14px;font-style:italic}
+
+/* markdown */
+.md p{margin:0 0 14px}
+.md h3{font-size:17px;margin:26px 0 12px;letter-spacing:-.01em;line-height:1.5}
+.md h4{font-size:15.5px;margin:18px 0 8px;line-height:1.5}
+.md>h3:first-child,.md>h4:first-child,.call .md>h3:first-child,.call .md>h4:first-child{margin-top:0}
+.md ul,.md ol{margin:0 0 14px;padding-left:22px}
+.md li{margin:3px 0}
+.md li>ul,.md li>ol{margin:4px 0 4px}
+.md hr{border:0;border-top:1px solid var(--line);margin:24px 0}
+.md del{color:var(--text-3)}
+.md strong{font-weight:700}
+.md table{border-collapse:separate;border-spacing:0;width:100%;margin:4px 0 14px;font-size:14.5px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.md th,.md td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.md th{background:var(--bg-sunk);font-weight:700}
+.md tr:last-child td{border-bottom:0}
+.md td+td,.md th+th{border-left:1px solid var(--line)}
+.tbl{overflow-x:auto}
+figure{margin:6px 0 22px}
+figure img{display:block;max-width:100%;height:auto;border-radius:12px;border:1px solid var(--line);cursor:zoom-in;background:var(--bg-soft)}
+figcaption{font-size:13px;color:var(--text-3);margin-top:8px}
+.call{display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--note-soft);border:1px solid var(--line);margin:0 0 14px}
+.call .ic{font-size:18px;line-height:1.5;flex-shrink:0}
+.call>.md{flex:1;min-width:0}
+.call .md>:last-child{margin-bottom:0}
+.call.ok{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 25%,transparent)}
+.call.no{background:var(--no-soft);border-color:color-mix(in srgb,var(--no) 25%,transparent)}
+.call.hl{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 20%,transparent)}
+.call.warn{background:var(--warn-soft);border-color:color-mix(in srgb,#d99a00 25%,transparent)}
+.call .call{background:var(--bg);margin-top:10px}
+mark{background:#ffe58a;color:inherit;border-radius:3px;padding:0 1px}
+
+/* search results */
+.res-h{font-size:14px;color:var(--text-3);margin:0 0 20px}
+.res{border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px}
+.res .from{font-size:12.5px;color:var(--text-3);margin-bottom:4px}
+.res h3{margin:0 0 10px;font-size:17px}
+.res h3 a{color:var(--text)}
+
+/* edit */
+.ed{display:none;border:1px dashed var(--line-strong);border-radius:12px;padding:12px;margin:0 0 16px;background:var(--bg-soft)}
+body.editing .ed{display:block}
+.ed-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
+.ed input,.ed select{height:36px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font:inherit;font-size:14px;background:var(--bg);color:var(--text)}
+.ed input.title{flex:1;min-width:200px;font-weight:600}
+.ed textarea{width:100%;min-height:180px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:13.5px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);color:var(--text);resize:vertical}
+.ed .hint{font-size:12px;color:var(--text-3);margin-top:6px}
+.addbtn{display:none;width:100%;margin:6px 0 30px;height:44px;border:1px dashed var(--line-strong);border-radius:12px;background:transparent;color:var(--text-2);font-weight:600}
+body.editing .addbtn{display:block}
+.addbtn:hover{background:var(--bg-soft);color:var(--accent)}
+body.editing .qa{border-style:dashed}
+
+/* lightbox */
+.lb{position:fixed;inset:0;background:rgba(8,12,20,.86);display:none;align-items:center;justify-content:center;z-index:50;padding:24px;cursor:zoom-out}
+.lb.show{display:flex}
+.lb img{max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:60}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.foot{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);font-size:13px;color:var(--text-3)}
+
+/* mobile */
+.tabs{display:none}
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:0;padding:0 16px}
+  .side{display:none}
+  .tabs{display:flex;gap:6px;max-width:1200px;margin:0 auto;padding:0 16px 10px}
+  .tabs a{flex:1;text-align:center;padding:8px;border-radius:10px;font-size:14px;font-weight:600;color:var(--text-2);background:var(--bg-soft);text-decoration:none!important}
+  .tabs a.active{background:var(--accent-soft);color:var(--accent-ink)}
+  .top-in{padding:10px 16px;gap:10px;flex-wrap:wrap}
+  .brand small{display:none}
+  .search{order:3;flex-basis:100%;max-width:none}
+  #editToggle{margin-left:auto}
+  main{padding-top:24px}
+  .step,.qa,.info{scroll-margin-top:170px}
+  h1.pt{font-size:27px}
+  .step{padding-left:0}
+  .step::before{display:none}
+  .num{position:static;margin-bottom:10px;width:34px;height:34px;font-size:15px;border-radius:10px}
+  .qa .ans{padding:0 16px 18px}
+  .qa summary{padding:14px 16px}
+  .editbar-in{padding:10px 16px}
+}
+body.published #editToggle,body.published .editbar{display:none!important}
+@media print{.top,.side,.ed,.addbtn{display:none!important}.wrap{display:block}.qa .ans{display:block}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#signup">
+      <span class="logo"><i></i></span>
+      <span><b id="siteTitle">피그마 가이드</b><small id="siteSub"></small></span>
+    </a>
+    <label class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="궁금한 내용을 검색하세요 (예: Captcha, 비밀번호)" autocomplete="off">
+    </label>
+    <button class="btn" id="editToggle" title="내용 편집">편집</button>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="editbar">
+    <div class="editbar-in">
+      <span class="status" id="editStatus">편집 모드 — 고친 내용은 이 브라우저에 임시 저장돼요.</span>
+      <button class="btn sm" id="btnReset">되돌리기</button>
+      <button class="btn sm primary" id="btnExport">content.js 내려받기</button>
+      <button class="btn sm" id="btnDone">편집 끝내기</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="side" id="side"></aside>
+  <main id="main"></main>
+</div>
+
+<div class="lb" id="lb"><img alt=""></div>
+<div class="toast" id="toast"></div>
+
+<!--CONTENT--><script src="content.js"></script><!--/CONTENT-->
+<script>
+function startApp(){
+'use strict';
+if(window.SITE_LOCKED) document.body.classList.add('published');
+const STORE='figma-guide-draft-v1';
+const ORIGINAL=JSON.parse(JSON.stringify(window.SITE_CONTENT||{pages:[]}));
+let DATA=ORIGINAL, dirty=false;
+if(!window.SITE_LOCKED) try{const d=localStorage.getItem(STORE); if(d){DATA=JSON.parse(d); dirty=true;}}catch(e){}
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+/* ---------------- markdown ---------------- */
+function inline(s){
+  const keep=[];
+  const put=h=>'\u0000'+(keep.push(h)-1)+'\u0000';
+  s=esc(s);
+  s=s.replace(/\[([^\]]*)\]\(([^)\s]+)\)/g,(m,t,u)=>{
+    const ext=/^https?:/i.test(u.replace(/&amp;/g,'&'));
+    return put('<a href="'+u+'"'+(ext?' target="_blank" rel="noopener"':'')+'>'+(t||u)+'</a>');
+  });
+  s=s.replace(/https?:\/\/[^\s<]+[^\s<.,)]/g,u=>put('<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>'));
+  s=s.replace(/\*\*([\s\S]+?)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/~~([\s\S]+?)~~/g,'<del>$1</del>');
+  s=s.replace(/\u0000(\d+)\u0000/g,(m,i)=>keep[+i]);
+  return s;
+}
+const LI=/^(\s*)([-*]|\d+\.)\s+(.*)$/;
+function callClass(ic){
+  if(/✅/.test(ic))return'ok'; if(/❌/.test(ic))return'no';
+  if(/🎉|📬|⁉️|📎|📝|👉|📋|👀/.test(ic))return'hl'; if(/💡/.test(ic))return'warn'; return'';
+}
+function md(src){
+  const L=String(src||'').replace(/\r/g,'').split('\n');
+  return blocks(L);
+}
+function blocks(L){
+  let out='',i=0;
+  while(i<L.length){
+    const line=L[i], t=line.trim();
+    if(!t){i++;continue}
+    if(t.startsWith(':::')&&t.length>3){
+      const ic=t.slice(3).trim(), inner=[]; let depth=1; i++;
+      while(i<L.length){
+        const tt=L[i].trim();
+        if(tt.startsWith(':::')){ if(tt.length>3)depth++; else{depth--; if(depth===0){i++;break}} }
+        inner.push(L[i]); i++;
+      }
+      const icon=ic==='box'?'':ic;
+      out+='<div class="call '+callClass(icon)+'">'+(icon?'<span class="ic">'+esc(icon)+'</span>':'')+'<div class="md">'+blocks(inner)+'</div></div>';
+      continue;
+    }
+    if(t===':::'){i++;continue}
+    if(/^-{3,}$/.test(t)){out+='<hr>';i++;continue}
+    let m=t.match(/^(#{1,4})\s+(.*)$/);
+    if(m){const lv=m[1].length>=4?4:3; out+='<h'+lv+'>'+inline(m[2])+'</h'+lv+'>';i++;continue}
+    m=t.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if(m){const src=(window.SITE_IMAGES&&window.SITE_IMAGES[m[2]])||m[2]; out+='<figure><img loading="lazy" src="'+esc(src)+'" alt="'+esc(m[1])+'">'+(m[1]?'<figcaption>'+esc(m[1])+'</figcaption>':'')+'</figure>';i++;continue}
+    if(t.startsWith('|')&&L[i+1]&&/^\|\s*:?-{2,}/.test(L[i+1].trim())){
+      const row=r=>r.trim().replace(/^\||\|$/g,'').split('|').map(c=>c.trim());
+      const head=row(t); i+=2; const body=[];
+      while(i<L.length&&L[i].trim().startsWith('|')){body.push(row(L[i]));i++}
+      out+='<div class="tbl"><table><thead><tr>'+head.map(c=>'<th>'+inline(c)+'</th>').join('')+'</tr></thead><tbody>'+
+        body.map(r=>'<tr>'+r.map(c=>'<td>'+inline(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+      continue;
+    }
+    if(LI.test(line)){
+      const items=[];
+      while(i<L.length){
+        const l=L[i];
+        if(!l.trim()){ // blank: continue list only if next is a list item
+          if(L[i+1]&&LI.test(L[i+1])){i++;continue} break;
+        }
+        const mm=l.match(LI);
+        if(mm){items.push({ind:mm[1].length,ord:/\d/.test(mm[2]),text:mm[3]});i++;continue}
+        if(/^\s+\S/.test(l)&&items.length){items[items.length-1].text+='\n'+l.trim();i++;continue}
+        break;
+      }
+      out+=list(items,0).html; continue;
+    }
+    const para=[];
+    while(i<L.length&&L[i].trim()&&!isStart(L,i)){para.push(L[i].trim());i++}
+    if(para.length) out+='<p>'+para.map(inline).join('<br>')+'</p>';
+    else i++;
+  }
+  return out;
+}
+function isStart(L,i){
+  const t=L[i].trim();
+  return t.startsWith(':::')||/^-{3,}$/.test(t)||/^#{1,4}\s/.test(t)||/^!\[[^\]]*\]\([^)]+\)$/.test(t)||LI.test(L[i])||
+    (t.startsWith('|')&&L[i+1]&&/^\|\s*:?-{2,}/.test(L[i+1].trim()));
+}
+function list(items,start){
+  const base=items[start].ind, ord=items[start].ord; let h='',i=start;
+  while(i<items.length&&items[i].ind>=base){
+    if(items[i].ind>base){const r=list(items,i);h=h.replace(/<\/li>$/,r.html+'</li>');i=r.next;continue}
+    h+='<li>'+items[i].text.split('\n').map(inline).join('<br>')+'</li>'; i++;
+  }
+  return{html:(ord?'<ol>':'<ul>')+h+(ord?'</ol>':'</ul>'),next:i};
+}
+
+/* ---------------- routing ---------------- */
+function route(){
+  const h=decodeURIComponent(location.hash.slice(1));
+  const [pid,sid]=h.split('/');
+  const page=DATA.pages.find(p=>p.id===pid)||DATA.pages[0];
+  return{page,sid};
+}
+let query='';
+
+function render(){
+  $('#siteTitle').textContent=DATA.title||'피그마 가이드';
+  $('#siteSub').textContent=DATA.subtitle||'';
+  document.title=DATA.title||'피그마 가이드';
+  const {page,sid}=route();
+  renderNav(page);
+  if(query.trim()) renderSearch();
+  else if(page.type==='faq') renderFaq(page,sid);
+  else renderSteps(page,sid);
+  bindEditors();
+  if(sid&&!query){const el=document.getElementById(page.id+'--'+sid); if(el){if(el.tagName==='DETAILS')el.open=true; setTimeout(()=>el.scrollIntoView({block:'start'}),30)}}
+  else if(!query) window.scrollTo(0,0);
+}
+
+function renderNav(cur){
+  $('#tabs').innerHTML=DATA.pages.map(p=>'<a href="#'+p.id+'" class="'+(p===cur?'active':'')+'">'+esc(p.title.replace(/^피그마\s*/,''))+'</a>').join('');
+  let h='<h6>메뉴</h6>';
+  DATA.pages.forEach(p=>{
+    h+='<a class="navpage '+(p===cur&&!query?'active':'')+'" href="#'+p.id+'">'+esc(p.title)+'</a>';
+    if(p===cur&&!query){
+      h+='<div class="navsub">';
+      if(p.type==='faq'){
+        groups(p).forEach(g=>{h+='<a href="#'+p.id+'/'+g.items[0].id+'">'+esc(g.name)+' <span style="opacity:.6">'+g.items.length+'</span></a>'});
+      }else{
+        p.sections.filter(s=>s.kind!=='info').forEach(s=>{h+='<a href="#'+p.id+'/'+s.id+'">'+esc(s.title)+'</a>'});
+      }
+      h+='</div>';
+    }
+  });
+  $('#side').innerHTML=h;
+}
+
+function groups(p){
+  const out=[];
+  p.sections.forEach(s=>{const n=s.group||'기타'; let g=out.find(x=>x.name===n); if(!g){g={name:n,items:[]};out.push(g)} g.items.push(s)});
+  return out;
+}
+
+function editor(page,s){
+  const isFaq=page.type==='faq';
+  const gopts=isFaq?groups(page).map(g=>g.name):[];
+  return '<div class="ed" data-p="'+page.id+'" data-s="'+s.id+'">'+
+    '<div class="ed-row">'+
+      (isFaq?'<select data-f="group">'+gopts.map(g=>'<option'+(g===s.group?' selected':'')+'>'+esc(g)+'</option>').join('')+'<option value="__new">+ 새 분류…</option></select>':'')+
+      '<input class="title" data-f="title" value="'+esc(s.title)+'" placeholder="제목">'+
+      '<button class="btn sm" data-act="up" title="위로">↑</button><button class="btn sm" data-act="down" title="아래로">↓</button>'+
+      '<button class="btn sm danger" data-act="del">삭제</button>'+
+    '</div>'+
+    '<textarea data-f="body" spellcheck="false">'+esc(s.body||'')+'</textarea>'+
+    '<div class="hint">입력하면 아래 미리보기에 바로 반영돼요. 작성 규칙은 content.js 맨 위 안내를 참고하세요.</div>'+
+  '</div>';
+}
+
+function body(s){return (s.body&&s.body.trim())?md(s.body):'<p class="empty">아직 작성된 내용이 없어요.</p>'}
+
+function renderSteps(page){
+  const infos=page.sections.filter(s=>s.kind==='info'), steps=page.sections.filter(s=>s.kind!=='info');
+  let h='<div class="eyebrow">가이드</div><h1 class="pt">'+esc(page.title)+'</h1><p class="intro">'+inline(page.intro||'')+'</p>';
+  if(infos.length){
+    h+='<div class="infos">'+infos.map(s=>'<div class="info" id="'+page.id+'--'+s.id+'">'+editor(page,s)+'<h3 class="st">'+esc(s.title)+'</h3><div class="md" data-prev>'+body(s)+'</div></div>').join('')+'</div>';
+  }
+  steps.forEach(s=>{
+    const m=s.title.match(/^(\d+)\.\s*(.*)$/);
+    h+='<section class="step" id="'+page.id+'--'+s.id+'">'+
+      '<div class="num'+(m?'':' plain')+'">'+(m?m[1]:'i')+'</div>'+editor(page,s)+
+      '<h2 class="st">'+esc(m?m[2]:s.title)+'</h2><div class="md" data-prev>'+body(s)+'</div></section>';
+  });
+  h+='<button class="addbtn" data-add="'+page.id+'">+ 단계 추가</button>';
+  $('#main').innerHTML=h;
+}
+
+function renderFaq(page){
+  let h='<div class="eyebrow">FAQ</div><h1 class="pt">'+esc(page.title)+'</h1><p class="intro">'+inline(page.intro||'')+'</p>';
+  groups(page).forEach(g=>{
+    h+='<div class="group"><div class="group-h"><h2>'+esc(g.name)+'</h2><span>'+g.items.length+'개</span></div>';
+    g.items.forEach(s=>{
+      h+='<details class="qa" id="'+page.id+'--'+s.id+'"'+(document.body.classList.contains('editing')?' open':'')+'><summary><span class="q">Q</span><span class="t">'+esc(s.title)+'</span>'+
+        '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>'+
+        '<div class="ans">'+editor(page,s)+'<div class="md" data-prev>'+body(s)+'</div></div></details>';
+    });
+    h+='<button class="addbtn" data-add="'+page.id+'" data-group="'+esc(g.name)+'">+ \''+esc(g.name)+'\' 에 질문 추가</button></div>';
+  });
+  $('#main').innerHTML=h;
+}
+
+
+/* ---------------- search ---------------- */
+function strip(s){return String(s||'').replace(/!\[[^\]]*\]\([^)]*\)/g,'').replace(/\[([^\]]*)\]\([^)]*\)/g,'$1').replace(/[*~#|>`]|:::\S*/g,' ').replace(/\s+/g,' ').trim()}
+function renderSearch(){
+  const q=query.trim().toLowerCase(), terms=q.split(/\s+/).filter(Boolean);
+  const hits=[];
+  DATA.pages.forEach(p=>p.sections.forEach(s=>{
+    const hay=(s.title+' '+strip(s.body)+' '+(s.group||'')).toLowerCase();
+    if(terms.every(t=>hay.includes(t))) hits.push({p,s});
+  }));
+  let h='<h1 class="pt" style="font-size:26px">검색 결과</h1><p class="res-h">“'+esc(query.trim())+'” — '+hits.length+'건</p>';
+  if(!hits.length) h+='<p class="empty">일치하는 내용이 없어요. 다른 단어로 검색해보세요.</p>';
+  hits.forEach(({p,s})=>{
+    h+='<div class="res"><div class="from">'+esc(p.title)+(s.group?' · '+esc(s.group):'')+'</div><h3><a href="#'+p.id+'/'+s.id+'" data-clear>'+esc(s.title)+'</a></h3><div class="md">'+body(s)+'</div></div>';
+  });
+  $('#main').innerHTML=h;
+  highlight($('#main'),terms);
+}
+function highlight(root,terms){
+  if(!terms.length)return;
+  const re=new RegExp('('+terms.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')','gi');
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); const nodes=[];
+  while(w.nextNode()){const n=w.currentNode; if(n.parentNode.closest('.res-h'))continue; if(re.test(n.nodeValue))nodes.push(n); re.lastIndex=0}
+  nodes.forEach(n=>{const span=document.createElement('span'); span.innerHTML=esc(n.nodeValue).replace(re,'<mark>$1</mark>'); n.replaceWith(...span.childNodes)});
+}
+
+/* ---------------- editing ---------------- */
+function find(pid,sid){const p=DATA.pages.find(x=>x.id===pid); return{p,i:p.sections.findIndex(s=>s.id===sid)}}
+function save(){
+  dirty=true;
+  try{localStorage.setItem(STORE,JSON.stringify(DATA))}catch(e){}
+  $('#editStatus').textContent='변경사항 있음 — 완료되면 [content.js 내려받기] 후 폴더의 파일을 교체하세요.';
+}
+function bindEditors(){
+  document.querySelectorAll('.ed').forEach(ed=>{
+    const {p,i}=find(ed.dataset.p,ed.dataset.s); const s=p.sections[i];
+    const prev=ed.parentNode.querySelector('[data-prev]');
+    ed.querySelector('[data-f=body]').addEventListener('input',e=>{s.body=e.target.value; prev.innerHTML=body(s); save()});
+    ed.querySelector('[data-f=title]').addEventListener('input',e=>{s.title=e.target.value; save()});
+    ed.querySelector('[data-f=title]').addEventListener('change',()=>render());
+    const g=ed.querySelector('[data-f=group]');
+    if(g) g.addEventListener('change',e=>{
+      let v=e.target.value;
+      if(v==='__new'){v=(prompt('새 분류 이름')||'').trim(); if(!v){render();return}}
+      s.group=v; save(); render();
+    });
+    ed.addEventListener('click',e=>{
+      const a=e.target.dataset.act; if(!a)return; e.preventDefault();
+      if(a==='del'){ if(!confirm('“'+s.title+'” 항목을 삭제할까요?'))return; p.sections.splice(i,1); }
+      if(a==='up'&&i>0){ [p.sections[i-1],p.sections[i]]=[p.sections[i],p.sections[i-1]] }
+      if(a==='down'&&i<p.sections.length-1){ [p.sections[i+1],p.sections[i]]=[p.sections[i],p.sections[i+1]] }
+      save(); render();
+    });
+    ed.addEventListener('keydown',e=>e.stopPropagation());
+  });
+}
+document.addEventListener('click',e=>{
+  const add=e.target.closest('[data-add]');
+  if(add){
+    const p=DATA.pages.find(x=>x.id===add.dataset.add);
+    const id=(p.type==='faq'?'q-':'s-')+Date.now().toString(36);
+    const s={id,title:p.type==='faq'?'새 질문':(p.sections.filter(x=>x.kind!=='info').length)+'. 새 단계',body:''};
+    if(add.dataset.group){ s.group=add.dataset.group; let last=-1; p.sections.forEach((x,k)=>{if(x.group===s.group)last=k}); p.sections.splice(last+1,0,s) }
+    else p.sections.push(s);
+    save(); location.hash='#'+p.id+'/'+id; render();
+    return;
+  }
+  const img=e.target.closest('figure img');
+  if(img&&!document.body.classList.contains('editing')){$('#lb img').src=img.src;$('#lb').classList.add('show');return}
+  if(e.target.closest('[data-clear]')){query='';$('#q').value=''}
+});
+$('#lb').addEventListener('click',()=>$('#lb').classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#lb').classList.remove('show')});
+
+function setEditing(on){
+  document.body.classList.toggle('editing',on);
+  $('#editToggle').classList.toggle('on',on);
+  $('#editToggle').textContent=on?'편집 중':'편집';
+  if(on&&query){query='';$('#q').value=''}
+  render();
+}
+$('#editToggle').onclick=()=>setEditing(!document.body.classList.contains('editing'));
+$('#btnDone').onclick=()=>setEditing(false);
+$('#btnReset').onclick=()=>{
+  if(!confirm('편집한 내용을 모두 버리고 content.js 원래 내용으로 되돌릴까요?'))return;
+  try{localStorage.removeItem(STORE)}catch(e){}
+  DATA=JSON.parse(JSON.stringify(ORIGINAL)); dirty=false;
+  $('#editStatus').textContent='편집 모드 — 고친 내용은 이 브라우저에 임시 저장돼요.';
+  render(); toast('원래 내용으로 되돌렸어요');
+};
+$('#btnExport').onclick=()=>{
+  const blob=new Blob([toJs(DATA)],{type:'text/javascript;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='content.js'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  toast('content.js 를 내려받았어요. 폴더의 기존 파일과 교체하세요.');
+};
+function tl(s){return '`'+String(s||'').replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$\{/g,'\\${')+'`'}
+function toJs(d){
+  const ind=n=>' '.repeat(n);
+  let o=HEADER+'\nwindow.SITE_CONTENT = {\n'+ind(2)+'"title": '+JSON.stringify(d.title)+',\n'+ind(2)+'"subtitle": '+JSON.stringify(d.subtitle||'')+',\n'+ind(2)+'"pages": [\n';
+  o+=d.pages.map(p=>{
+    let s=ind(4)+'{\n';
+    ['id','title','intro','type'].forEach(k=>{s+=ind(6)+JSON.stringify(k)+': '+JSON.stringify(p[k]||'')+',\n'});
+    s+=ind(6)+'"sections": [\n'+p.sections.map(x=>{
+      let t=ind(8)+'{\n'+ind(10)+'"id": '+JSON.stringify(x.id)+',\n';
+      if(x.group)t+=ind(10)+'"group": '+JSON.stringify(x.group)+',\n';
+      if(x.kind)t+=ind(10)+'"kind": '+JSON.stringify(x.kind)+',\n';
+      t+=ind(10)+'"title": '+JSON.stringify(x.title)+',\n'+ind(10)+'"body": '+tl(x.body)+'\n'+ind(8)+'}';
+      return t;
+    }).join(',\n')+'\n'+ind(6)+']\n'+ind(4)+'}';
+    return s;
+  }).join(',\n');
+  return o+'\n'+ind(2)+']\n};\n';
+}
+const HEADER=`/* =========================================================
+   피그마 가이드 — 콘텐츠 파일
+   ---------------------------------------------------------
+   이 파일만 고치면 사이트 내용이 바뀌어요.
+   (사이트 우측 상단 [편집] 버튼으로 화면에서 고친 뒤
+    "content.js 내려받기"로 이 파일을 교체해도 돼요.)
+
+   작성 규칙
+   - 소제목      : ### 제목      /  작은 제목 : #### 제목
+   - 굵게        : **텍스트**    /  취소선   : ~~텍스트~~
+   - 목록        : - 항목        /  번호목록 : 1. 항목
+   - 링크        : [텍스트](주소)
+   - 이미지      : ![설명](images/파일명.png)
+   - 안내 박스   : :::✅  (다음 줄부터 내용)  …  :::  로 닫기
+                   이모지는 바꿔도 되고, 아이콘 없는 박스는 :::box
+   - 구분선      : ---
+   - 백슬래시(\\) 를 쓰려면 \\\\ 로 두 번 입력
+   ========================================================= */
+`;
+
+let tt;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600)}
+
+/* ---------------- search input / hash ---------------- */
+let st;
+$('#q').addEventListener('input',e=>{clearTimeout(st);st=setTimeout(()=>{query=e.target.value;render()},120)});
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){e.preventDefault();$('#q').focus()}
+});
+window.addEventListener('hashchange',()=>{query='';$('#q').value='';render()});
+
+// scroll spy for sidebar
+const spy=()=>{
+  const links=[...document.querySelectorAll('.navsub a')]; if(!links.length)return;
+  let cur=null;
+  links.forEach(a=>{const el=document.getElementById(a.getAttribute('href').slice(1).replace('/','--')); if(el&&el.getBoundingClientRect().top<140)cur=a});
+  links.forEach(a=>a.classList.toggle('cur',a===cur));
+};
+window.addEventListener('scroll',spy,{passive:true});
+
+if(dirty) $('#editStatus').textContent='이전에 편집하던 내용이 있어요 — 완료되면 [content.js 내려받기] 후 파일을 교체하세요.';
+render();
+}
+if(window.SITE_CONTENT) startApp();
+</script>
+</body>
+</html>
